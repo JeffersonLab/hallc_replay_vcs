@@ -5,6 +5,7 @@ ONLINE_DIR=$(dirname $(readlink -f $0))/..
 cd $ONLINE_DIR
 
 ## setup the enviroment
+echo " setup env"
 source scripts/setup_env.sh
 module use /home/cdaq/vcs2019/local/etc/modulefiles
 module load hallac_container/1.0.0
@@ -45,22 +46,26 @@ function yes_or_no {
   done
 }
 
-
+echo " start"
 if [[ $# -eq 0 ]] ; then
+echo " print help"
   print_the_help
   exit 
 fi
+echo " positional"
 
 daq_mode='coin'
 num_events=-1
-run_number=$(latest_run -t shms)
+echo " get latest run number"
+run_number=$(./latest_run -t shms)
+echo $run_number
 update_run_info=0
-
+echo $daq_mode
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
   key="$1"
-
+  echo $key
   case $key in
     -h|--help)
       shift # past argument
@@ -94,10 +99,12 @@ do
   esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
-
 if [ "$daq_mode" != "shms" ]; then
+echo " run hms"
 /home/cdaq/vcs2019/local/opt/hallac_container_1.0.0/bin/root -b -q "scripts/good_hms_counter.cxx+(${run_number},${num_events},\"${daq_mode}\")"
 fi
 if [ "$daq_mode" != "hms" ]; then
+echo " run shms"
 /home/cdaq/vcs2019/local/opt/hallac_container_1.0.0/bin/root -b -q "scripts/good_shms_counter.cxx+(${run_number},${num_events},\"${daq_mode}\")"
 fi
+echo " end single counter"

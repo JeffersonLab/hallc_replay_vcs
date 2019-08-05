@@ -28,7 +28,7 @@
 * Angular cuts:
 
 * HMS theta upper cut
-0.04
+0.08
 
 * HMS phi upper cut
 0.04
@@ -52,7 +52,7 @@
 * 38.55 first runs replayed IIa ... have this delay. next have 39. to check
 * 39.0 kin Ia
 * 38.85 kin Ib
-38.85
+38.
 
 * Trigger time lower cut (+/- delay, negative)
 -100000

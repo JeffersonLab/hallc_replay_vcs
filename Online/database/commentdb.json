@@ -133,5 +133,56 @@
   }, 
   "9168": {
     "comment": "#9167 EB2 disconnected, kcoda and restart coda, no data saved"
+  }, 
+  "9202": {
+    "comment": "BCM calib"
+  }, 
+  "9229": {
+    "comment": "junk run no beam"
+  }, 
+  "9261": {
+    "comment": "9260 not shown because coda failed"
+  }, 
+  "9278": {
+    "comment": "  "
+  }, 
+  "9288": {
+    "comment": "junk"
+  }, 
+  "9301": {
+    "comment": "beam tripped many times,short run"
+  }, 
+  "9313": {
+    "comment": "very short run. beam tripped"
+  }, 
+  "9341": {
+    "comment": "coda failed at 3940, thats why no runnumber for 3940"
+  }, 
+  "9369": {
+    "comment": "IIIb elastic run,shms drive contr. failure angle set 9_67 not 9_64"
+  }, 
+  "9370": {
+    "comment": "IIIb elastic run"
+  }, 
+  "9373": {
+    "comment": "singles bad beam"
+  }, 
+  "9374": {
+    "comment": "singles optic work"
+  }, 
+  "9376": {
+    "comment": "bcm calib"
+  }, 
+  "9377": {
+    "comment": "bcm calib"
+  }, 
+  "9378": {
+    "comment": "bcm calib"
+  }, 
+  "9379": {
+    "comment": "bcm calib or junk"
+  }, 
+  "9383": {
+    "comment": "HMS angle is 33.53"
   }
 }

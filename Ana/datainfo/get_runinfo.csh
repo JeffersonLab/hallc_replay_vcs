@@ -38,4 +38,5 @@ grep 'HADRON SING FID TRACK EFFIC' ${dir}/${file}_${1}_${2}.report | awk '{print
 
 grep 'Run #' ${dir}/${file}_${1}_${2}.report | awk '{printf $3 " "}' >> $outfile4
 grep 'Missing Ref times:' ${dir}/printed_coin_production_${1}_${2}.report | awk '{printf $5 " " $6 " "}' >> $outfile4
+echo "Finished run info"
 
