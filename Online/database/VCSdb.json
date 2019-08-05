@@ -23135,11 +23135,11 @@
         },
         "missing_mass": {
             "peak1": {
-                "integral": 0.9707423684513266,
+                "integral": 0.9595058642677414,
                 "mass": 0.020999999716877937,
-                "max": 69513.3359375,
-                "sum_arbcut": 259654.8125,
-                "sum_withbkg": 315458.81778492645
+                "max": 68662.1640625,
+                "sum_arbcut": 256575.140625,
+                "sum_withbkg": 311724.0062040441
             },
             "peak2": {
                 "integral": 0.0,
@@ -23149,7 +23149,7 @@
                 "sum_withbkg": 0.0
             },
             "peak3": {
-                "integral": 6.9140305040951e-310,
+                "integral": 6.9098006328303e-310,
                 "mass": -1.0,
                 "max": 0.0,
                 "sum_arbcut": 0.0,
@@ -23158,32 +23158,32 @@
         },
         "timing": {
             "peak1": {
-                "N_over_L": 0.003964955452829599,
-                "background_avg": 18880.375,
-                "background_high": 18300.0,
+                "N_over_L": 0.003964172210544348,
+                "background_avg": 18883.25,
+                "background_high": 18305.75,
                 "background_low": 19460.75,
-                "delay": 0.03333333507180214,
-                "events": 363925.625,
-                "max": 25647.0,
-                "raw_events": 382806.0
+                "delay": -0.23333333432674408,
+                "events": 363853.75,
+                "max": 25703.0,
+                "raw_events": 382737.0
             },
             "peak2": {
-                "N_over_L": -0.0002057009405689314,
-                "background_avg": 18880.375,
-                "background_high": 18300.0,
+                "N_over_L": -0.00020573227084241807,
+                "background_avg": 18883.25,
+                "background_high": 18305.75,
                 "background_low": 19460.75,
                 "delay": 0.0,
-                "events": -18880.375,
+                "events": -18883.25,
                 "max": 0.0,
                 "raw_events": 0.0
             },
             "peak3": {
-                "N_over_L": -0.0002057009405689314,
-                "background_avg": 18880.375,
-                "background_high": 18300.0,
+                "N_over_L": -0.00020573227084241807,
+                "background_avg": 18883.25,
+                "background_high": 18305.75,
                 "background_low": 19460.75,
                 "delay": 0.0,
-                "events": -18880.375,
+                "events": -18883.25,
                 "max": 0.0,
                 "raw_events": 0.0
             }
