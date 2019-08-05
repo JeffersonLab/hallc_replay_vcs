@@ -53,7 +53,6 @@ echo ">>> check peak positions: "
 more ${dir}/Ana/files/missmass2_${run}.dat | awk '{printf $2 " "}'
 echo ">>>check if integral VCS/pi0 make sense for this kinematics, there is 2 peaks and no 3d peak (M2=-1 if no peak)"
 
-echo "\n pop-up ana monitoring figures: "
-evince ${dir}/Ana/Results/ana_monitor_${run}.pdf &
+
 echo "reconstruction is done"
 
