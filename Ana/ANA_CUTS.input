@@ -92,4 +92,23 @@
 * beta max SHMS (if no cut set negative / can be above 1 for resolution)
 -1
 
+*********************************************************
+* Selecting accidentals events                          *
+*********************************************************
+
+* coincidence time cut for selected events in ns
+* (1 ns will select +- 1 ns from time=0, i.e. 2 ns window) 
+1
+
+* minimal offset time for accidentals in ns (on both side)
+* provide an odd number, more than 3, and smaller than max and time cut
+7
+
+* maximum offset time for accidentals in ns
+* provide an odd number, smaller than coin time cut
+13
+
+
+
+
 
