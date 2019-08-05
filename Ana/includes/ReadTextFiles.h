@@ -17,7 +17,7 @@
 using namespace std;
 const int tot_runlist= 10; // update max number of runs
 
-int ReadHeader(float (&inc)[25]);
+int ReadHeader(float (&inc)[26]);
 
 bool IsBadRun(  int runint, int *badruntable); 
 

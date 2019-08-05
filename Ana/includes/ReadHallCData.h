@@ -85,6 +85,7 @@ class ReadHallCData {
    float HMS34rates, SHMS34rates, HMS_ST, SHMS_ST, C_T; 
    float HMS_E_eff, HMS_H_eff, SHMS_E_eff, SHMS_H_eff; 
    float HMS_run_l, SHMS_run_l, All_T, lumiexp_HMS, lumiexp_SHMS;
+   float CTtimeCut, CTbackLow, CTbackHi, CTSigBackRat;
 
    // for tree out
    int runindex, misstimeref[22];
@@ -97,6 +98,7 @@ class ReadHallCData {
    float ALV_proton_in_data[4]; 
    float M2miss_data, Mmiss_data, Emiss_data, PTmiss_data, PT2miss_data, Pmiss_ref_data, Thmiss_ref_data; 
    float Q2_data, epsilon_data, Xbj_data, CosThCM_data, ThCM_data, mt_data, nu_data, W_data, Phi_data; 
+   float ThCM_vcs_data,ThCM_pi0_data;
    float beta_HMS, beta_SHMS;
    float Q2_kinmod, epsilon_kinmod, Xbj_kinmod, mt_kinmod, W_kinmod, nu_kinmod;
    float HMS_act_time, SHMS_act_time;
@@ -104,7 +106,7 @@ class ReadHallCData {
    // files
    ofstream outfile, out2, out3;
    ifstream infile; 
-   float inc[25];
+   float inc[26];
    string line;
    float LL, hdp_low, hdp_up, sdp_low, sdp_up;
    float th_hms_up, phi_hms_up, th_shms_up, phi_shms_up;

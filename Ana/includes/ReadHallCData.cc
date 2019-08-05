@@ -1,25 +1,10 @@
 #define ReadHallCData_cxx
 #include "ReadHallCData.h"
-
 // To write to VCS database
 #include "Database.h"
 #include "nlohmann/json.hpp"
 using nlohmann::json;
-
 using namespace std;
-
-const float CTtimeCut =
-    1.0;  // This is the total size of the coincidence time window on on both positive and negative
-          // side. i.e. 1.5 would mean cut from -1.5 to 1.5;
-const float CTbackLow =
-    7.0;  // This is the lower limit of the background CT time window.  Note that this value applies
-          // to both positive and negative CTtime on either side of peak.
-const float CTbackHi = 13.0;  // The upper limit of background CT time window.  Same as for above,
-                              // this applies to both positive and negative.
-
-const float CTSigBackRat =
-    2.0 * CTtimeCut /
-    (2.0 * (CTbackHi - CTbackLow));  // The ratio to apply when subtracting coincidental background.
 
 void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, string what,
                          string target) {
@@ -64,6 +49,10 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
   hms_beta_max       = inc[20];
   shms_beta_min      = inc[21];
   shms_beta_max      = inc[22];
+  CTtimeCut          = inc[23]; 
+  CTbackLow          = inc[24]; 
+  CTbackHi           = inc[25];
+  CTSigBackRat =2.0 * CTtimeCut /(2.0 * (CTbackHi - CTbackLow));  // The ratio to apply when subtracting coincidental background.
 
   cout << "user options: " << endl;
   cout << "target lenght = " << LL << ", trigger time cut low/up = " << trig_time_cut_low << " "
@@ -83,11 +72,6 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
   cout << "SHMS beta min, max = " << shms_beta_min << " " << shms_beta_max << endl;
   cout << "Start producing the new Tree" << endl;
 
-  // InitBins(process);
-  // printf("min=%f %f %f %f %f %f %f %f %f %f %f ",M2miss_min, Mmiss_min, Emiss_min, miss_mom_min,
-  // PTmiss_min, PT2miss_min, M2miss_max, Mmiss_max, miss_mom_max, Emiss_max, PTmiss_max,
-  // PT2miss_max); printf("%d %d %d %d %d %d %d %d %d",M2miss_bins, Mmiss_bins, miss_mom_bins,
-  // Emiss_bins, PT2miss_bins, PTmiss_bins, abs_time_bins, rel_time_bins, trig_time_bins);
   cout << hms_beta_min << " " << hms_beta_max << " " << hms_beta_bins << " " << shms_beta_min << " "
        << shms_beta_max << " " << shms_beta_bins << " " << endl;
 
@@ -101,6 +85,14 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
     return;
   }
 
+  // offset in Cointime depending on central momentum
+  // warning : check if good for all runs and replay them
+  Double_t ct_off=0;
+  if ( abs(HMS_p_central-0.795) < .005) ct_off=0; // assume input set for Kin3B
+  if ( abs(HMS_p_central-0.863) < .005) ct_off=38.53-37.75; // assume input set for Kin2B
+  if ( abs(HMS_p_central-0.893) < .005) ct_off=38.82-37.75; // assume input set for Kin1B
+  time_shift=     time_shift+ct_off;
+  
   cout << "\n*** database run information:" << endl;
   cout << "run ID: " << runID << endl;
   cout << "beam E= " << Eb << " target mass = " << targetmass << endl;
@@ -164,9 +156,15 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
   HallCTree->Branch("ALV_el_in_data", &ALV_el_in_data, "ALV_el_in_data[4]/F");
   if (process.compare("vcs") == 0 || process.compare("vcsLT") == 0 ||
       process.compare("elastic") == 0 || process.compare("elasticLT") == 0) {
+    HallCTree->Branch("CosThCM_vcs_data", &CosThCM_data, "CosThCM_data/F");
+    HallCTree->Branch("ThCM_vcs_data", &ThCM_vcs_data, "ThCM_vcs_data/F");
+    HallCTree->Branch("ThCM_pi0_data", &ThCM_pi0_data, "ThCM_pi0_data/F");
     HallCTree->Branch("ALV_gamma_out_data", &ALV_gamma_out_data, "ALV_gamma_out_data[4]/F");
     HallCTree->Branch("ALV_proton_out_data", &ALV_proton_out_data, "ALV_proton_out_data[4]/F");
   } else if (process.compare("pi0") == 0 || process.compare("pi0LT") == 0) {
+    HallCTree->Branch("CosThCM_vcs_data", &CosThCM_data, "CosThCM_data/F");
+    HallCTree->Branch("ThCM_vcs_data", &ThCM_vcs_data, "ThCM_vcs_data/F");
+    HallCTree->Branch("ThCM_pi0_data", &ThCM_pi0_data, "ThCM_pi0_data/F");
     HallCTree->Branch("ALV_pi_out_data", &ALV_pi_out_data, "ALV_pi_out_data[4]/F");
     HallCTree->Branch("ALV_proton_out_data", &ALV_proton_out_data, "ALV_proton_out_data[4]/F");
   } else if (process.compare("pi+") == 0 || process.compare("pi+LT") == 0 ||
@@ -500,14 +498,13 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
       FillArray_LV(LV_gamma_out_data, ALV_neutron_out_data);
     }
 
-    HallCTree->Fill();
-    if (what.compare("reduce") == 0)
-      continue;
 
     if (process.compare("elastic") == 0 || process.compare("elasticLT") == 0) {
       Phi_data     = 0;
       CosThCM_data = 0;
       ThCM_data    = 0;
+      ThCM_vcs_data    = 0;
+      ThCM_pi0_data    = 0;
     } else if (process.compare("vcs") == 0 || process.compare("pi0") == 0 ||
                process.compare("pi+") == 0 || process.compare("vcsLT") == 0 ||
                process.compare("pi0LT") == 0 || process.compare("pi+LT") == 0 ||
@@ -522,27 +519,36 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
       if (process.compare("vcs") == 0 || process.compare("vcsLT") == 0 ||
           process.compare("pi0") == 0 || process.compare("pi0LT") == 0) {
         if (process.compare("pi0") == 0 || process.compare("pi0LT") == 0) {
-          Egout_CMeP   = (pow(W_data, 2) - pow(M_Proton, 2)) / (2. * W_data);
+            Egout_CMeP   = (pow(W_data, 2) - pow(M_Proton, 2) + pow(M_piz, 2)) / (2. * W_data);
+            PoutCM       = sqrt(pow(Egout_CMeP, 2) - pow(M_piz, 2));
+            CosThCM_data = (-mt_data + Q2_data - pow(M_piz, 2) +
+                          2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /
+                         (2. * PinCM * PoutCM);
+          ThCM_data = acos(CosThCM_data) * 180. / PI;
+        } else {
+	        // first pi0 calc
+          Egout_CMeP   = (pow(W_data, 2) - pow(M_Proton, 2) + pow(M_piz, 2)) / (2. * W_data);
           PoutCM       = sqrt(pow(Egout_CMeP, 2) - pow(M_piz, 2));
           CosThCM_data = (-mt_data + Q2_data - pow(M_piz, 2) +
                           2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /
                          (2. * PinCM * PoutCM);
-        } else {
-          Egout_CMeP   = (pow(W_data, 2) - pow(M_Proton, 2) + pow(M_piz, 2)) / (2. * W_data);
+          ThCM_data = acos(CosThCM_data) * 180. / PI;
+	        ThCM_pi0_data = ThCM_data ;
+	        // now vcs calc
+          Egout_CMeP   = (pow(W_data, 2) - pow(M_Proton, 2)) / (2. * W_data);
           PoutCM       = Egout_CMeP;
           CosThCM_data = (-mt_data + Q2_data + 2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /
                          (2. * PinCM * Egout_CMeP);
+          ThCM_data = acos(CosThCM_data) * 180. / PI;
+	        ThCM_vcs_data = ThCM_data;
         }
       } else if (process.compare("pi+") == 0 || process.compare("pi+LT") == 0 ||
                  process.compare("K+") == 0 || process.compare("K+LT") == 0) {
-        if (process.compare("pi+") == 0 || process.compare("pi+LT") == 0) {
-          PoutCM       = sqrt((pow((pow(W_data, 2) - pow(M_pip, 2) - M_Neutron * M_Neutron), 2) -
-                         4. * pow(M_pip, 2) * pow(M_Neutron, 2)) /
-                        (4. * pow(W_data, 2)));
-          Egout_CMeP   = (pow(W_data, 2) - pow(M_Neutron, 2) + pow(M_pip, 2)) / (2. * W_data);
-          CosThCM_data = (-mt_data + Q2_data - pow(M_pip, 2) +
-                          2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /
-                         (2. * PinCM * PoutCM);
+                  if (process.compare("pi+") == 0 || process.compare("pi+LT") == 0) {
+                          PoutCM       = sqrt((pow((pow(W_data, 2) - pow(M_pip, 2) - M_Neutron * M_Neutron), 2) - 4. * pow(M_pip, 2) * pow(M_Neutron, 2)) / (4. * pow(W_data, 2)));
+                          Egout_CMeP   = (pow(W_data, 2) - pow(M_Neutron, 2) + pow(M_pip, 2)) / (2. * W_data);
+                          CosThCM_data = (-mt_data + Q2_data - pow(M_pip, 2) + 2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /(2. * PinCM * PoutCM);
+                          ThCM_data = acos(CosThCM_data) * 180. / PI;
         } else {
           PoutCM     = sqrt((pow((pow(W_data, 2) - pow(M_kp, 2) - M_Neutron * M_Neutron), 2) -
                          4. * pow(M_kp, 2) * pow(M_Neutron, 2)) /
@@ -551,10 +557,12 @@ void ReadHallCData::Loop(vector<string> vector_name, int runID, string process, 
           CosThCM_data =
               (-mt_data + Q2_data - pow(M_kp, 2) + 2 * Egout_CMeP * sqrt(pow(PinCM, 2) - Q2_data)) /
               (2. * PinCM * PoutCM);
+          ThCM_data = acos(CosThCM_data) * 180. / PI;
         }
       }
-      ThCM_data = acos(CosThCM_data) * 180. / PI;
-    }
+     }
+    HallCTree->Fill();
+    if (what.compare("reduce") == 0) continue;
 
     // no cut, from kinematic module
     h_Q2[0]->Fill(Q2_kinmod);
